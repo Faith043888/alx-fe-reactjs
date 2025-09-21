@@ -1,39 +1,66 @@
-import React, { useState } from 'react';
-import { useRecipeStore } from './recipeStore';
+// src/components/AddRecipeForm.jsx
+import React, { useState } from "react";
+import { useRecipeStore } from "./recipeStore";
 
 const AddRecipeForm = () => {
   const addRecipe = useRecipeStore((state) => state.addRecipe);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [ingredients, setIngredients] = useState("");
+  const [prepTime, setPrepTime] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!title.trim() || !description.trim()) return;
 
-    addRecipe({ id: Date.now(), title, description });
-    setTitle('');
-    setDescription('');
+    // convert ingredients string into array (comma separated)
+    const ingredientList = ingredients
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item);
+
+    addRecipe({
+      id: Date.now(),
+      title,
+      description,
+      ingredients: ingredientList,
+      prepTime,
+    });
+
+    // reset form fields
+    setTitle("");
+    setDescription("");
+    setIngredients("");
+    setPrepTime("");
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <h2>Add Recipe</h2>
+    <form onSubmit={handleSubmit}>
       <input
         type="text"
+        placeholder="Recipe Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Recipe Title"
-        style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc' }}
+        required
       />
       <textarea
+        placeholder="Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Recipe Description"
-        style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc', minHeight: 80 }}
+        required
       />
-      <button type="submit" style={{ padding: 10, background: '#0077cc', color: '#fff', border: 'none', borderRadius: 4 }}>
-        Add Recipe
-      </button>
+      <input
+        type="text"
+        placeholder="Ingredients (comma separated)"
+        value={ingredients}
+        onChange={(e) => setIngredients(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Preparation Time (e.g. 30 mins)"
+        value={prepTime}
+        onChange={(e) => setPrepTime(e.target.value)}
+      />
+      <button type="submit">Add Recipe</button>
     </form>
   );
 };
