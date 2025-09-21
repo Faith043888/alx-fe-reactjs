@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 import RecipeList from './components/RecipeList';
 import AddRecipeForm from './components/AddRecipeForm';
-import { useRecipeStore } from './store/recipeStore';
+import { useRecipeStore } from './components/recipeStore';
 
 function App() {
   const setRecipes = useRecipeStore((s) => s.setRecipes);
 
-  // Load initial recipe
   useEffect(() => {
     setRecipes([
       {
@@ -19,21 +18,8 @@ function App() {
   }, [setRecipes]);
 
   return (
-    <div
-      style={{
-        fontFamily: 'Arial, sans-serif',
-        maxWidth: 1000,
-        margin: '0 auto',
-      }}
-    >
-      <header
-        style={{
-          background: '#0077cc',
-          color: '#fff',
-          padding: 20,
-          textAlign: 'center',
-        }}
-      >
+    <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: 1000, margin: '0 auto' }}>
+      <header style={{ background: '#0077cc', color: '#fff', padding: 20, textAlign: 'center' }}>
         <h1 style={{ margin: 0 }}>Recipe Sharing App</h1>
         <p style={{ margin: '8px 0 0' }}>Add and browse community recipes</p>
       </header>
