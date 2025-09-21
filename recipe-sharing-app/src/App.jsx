@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
-import RecipeList from "./components/RecipeList";
-import AddRecipeForm from "./components/AddRecipeForm";
-import SearchBar from "./components/SearchBar";
-import { useRecipeStore } from "./components/recipeStore";
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import RecipeList from './components/RecipeList';
+import AddRecipeForm from './components/AddRecipeForm';
+import RecipeDetail from './components/RecipeDetail';
+import SearchBar from './components/SearchBar';
+import { useRecipeStore } from './components/recipeStore';
 
 function App() {
   const setRecipes = useRecipeStore((s) => s.setRecipes);
@@ -11,45 +13,54 @@ function App() {
     setRecipes([
       {
         id: 1,
-        title: "Classic Pancakes",
-        description: "Fluffy pancakes made with flour, milk, eggs, and a pinch of salt.",
-        ingredients: ["flour", "milk", "eggs", "salt"],
-        prepTime: 20,
+        title: 'Classic Pancakes',
+        description:
+          'Fluffy pancakes made with flour, milk, eggs, and a pinch of salt. Serve with syrup.',
       },
       {
         id: 2,
-        title: "Spaghetti Bolognese",
-        description: "Pasta with a rich tomato and meat sauce.",
-        ingredients: ["pasta", "tomato", "beef", "garlic"],
-        prepTime: 45,
-      },
-      {
-        id: 3,
-        title: "Avocado Toast",
-        description: "Toasted bread with smashed avocado and seasoning.",
-        ingredients: ["bread", "avocado", "salt", "pepper"],
-        prepTime: 10,
+        title: 'Spaghetti Bolognese',
+        description:
+          'Traditional Italian pasta dish with ground beef, tomato sauce, and herbs.',
       },
     ]);
-  }, [setRecipes]);
+  }, []);
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", maxWidth: 1000, margin: "0 auto" }}>
-      <header style={{ background: "#0077cc", color: "#fff", padding: 20, textAlign: "center" }}>
-        <h1 style={{ margin: 0 }}>Recipe Sharing App</h1>
-        <p style={{ margin: "8px 0 0" }}>Add, search, and filter recipes</p>
-      </header>
+    <Router>
+      <div
+        style={{
+          fontFamily: 'Arial, sans-serif',
+          maxWidth: 1000,
+          margin: '0 auto',
+        }}
+      >
+        <header
+          style={{
+            background: '#0077cc',
+            color: '#fff',
+            padding: 20,
+            textAlign: 'center',
+          }}
+        >
+          <h1 style={{ margin: 0 }}>Recipe Sharing App</h1>
+          <p style={{ margin: '8px 0 0' }}>Add, search, and browse recipes</p>
+        </header>
 
-      <main style={{ display: "flex", gap: 20, padding: 20 }}>
-        <div style={{ flex: 1 }}>
-          <AddRecipeForm />
-        </div>
-        <div style={{ flex: 2 }}>
-          <SearchBar />
-          <RecipeList />
-        </div>
-      </main>
-    </div>
+        <main style={{ display: 'flex', gap: 20, padding: 20 }}>
+          <div style={{ flex: 1 }}>
+            <AddRecipeForm />
+            <SearchBar />
+          </div>
+          <div style={{ flex: 2 }}>
+            <Routes>
+              <Route path="/" element={<RecipeList />} />
+              <Route path="/recipes/:id" element={<RecipeDetail />} />
+            </Routes>
+          </div>
+        </main>
+      </div>
+    </Router>
   );
 }
 
