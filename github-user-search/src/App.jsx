@@ -1,13 +1,13 @@
-import React from 'react';
+import "./App.css";
+import Search from "./components/Search";
 
 function App() {
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px' }}>
+    <div className="App">
       <h1>GitHub User Search</h1>
-      <p>Setup complete! Ready to build the app 🚀</p>
+      <Search />
     </div>
   );
 }
 
 export default App;
- 
