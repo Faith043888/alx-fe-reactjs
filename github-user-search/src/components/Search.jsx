@@ -5,26 +5,33 @@ function Search() {
   const [query, setQuery] = useState("");
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ loading state
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  // ✅ Required function name
+  const fetchUserData = async (username) => {
     setError("");
     setUser(null);
-    setLoading(true); // ✅ start loading
+    setLoading(true);
 
     try {
-      const result = await searchGithubUser(query);
+      const result = await searchGithubUser(username);
 
       if (result && result.login) {
         setUser(result);
       } else {
-        setError("Looks like we cant find the user"); // ✅ required text
+        setError("Looks like we cant find the user");
       }
     } catch (err) {
       setError("Looks like we cant find the user");
     } finally {
-      setLoading(false); // ✅ stop loading
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (query.trim()) {
+      fetchUserData(query); // ✅ use the function
     }
   };
 
@@ -43,10 +50,8 @@ function Search() {
         </button>
       </form>
 
-      {loading && <p className="text-gray-500 mt-4">Loading</p>} {/* ✅ required */}
-
+      {loading && <p className="text-gray-500 mt-4">Loading</p>} {/* ✅ */}
       {error && <p className="text-red-500 mt-4">{error}</p>}
-
       {user && (
         <div className="mt-4 p-4 border rounded">
           <h2 className="font-bold text-lg">{user.login}</h2>
@@ -62,4 +67,5 @@ function Search() {
 }
 
 export default Search;
+
 
