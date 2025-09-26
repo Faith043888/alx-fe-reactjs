@@ -1,30 +1,31 @@
 import { useState } from "react";
-import { searchGithubUser } from "../services/githubService";
+import { fetchUserData } from "../services/githubService"; // ✅ updated import
 
 function Search() {
   const [query, setQuery] = useState("");
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ loading state
+  const [loading, setLoading] = useState(false);
 
   const handleSearch = async (e) => {
     e.preventDefault();
+    if (!query.trim()) return;
+
     setError("");
     setUser(null);
-    setLoading(true); // ✅ start loading
+    setLoading(true);
 
     try {
-      const result = await searchGithubUser(query);
-
+      const result = await fetchUserData(query); // ✅ call the service
       if (result && result.login) {
         setUser(result);
       } else {
-        setError("Looks like we cant find the user"); // ✅ required text
+        setError("Looks like we cant find the user");
       }
-    } catch (err) {
+    } catch {
       setError("Looks like we cant find the user");
     } finally {
-      setLoading(false); // ✅ stop loading
+      setLoading(false);
     }
   };
 
@@ -43,10 +44,8 @@ function Search() {
         </button>
       </form>
 
-      {loading && <p className="text-gray-500 mt-4">Loading</p>} {/* ✅ required */}
-
+      {loading && <p className="text-gray-500 mt-4">Loading</p>}
       {error && <p className="text-red-500 mt-4">{error}</p>}
-
       {user && (
         <div className="mt-4 p-4 border rounded">
           <h2 className="font-bold text-lg">{user.login}</h2>
@@ -62,4 +61,3 @@ function Search() {
 }
 
 export default Search;
-
