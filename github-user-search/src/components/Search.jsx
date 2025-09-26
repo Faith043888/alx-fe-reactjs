@@ -5,11 +5,13 @@ function Search() {
   const [query, setQuery] = useState("");
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // ✅ loading state
 
   const handleSearch = async (e) => {
     e.preventDefault();
     setError("");
     setUser(null);
+    setLoading(true); // ✅ start loading
 
     try {
       const result = await searchGithubUser(query);
@@ -20,7 +22,9 @@ function Search() {
         setError("Looks like we cant find the user"); // ✅ required text
       }
     } catch (err) {
-      setError("Looks like we cant find the user"); // ✅ required text
+      setError("Looks like we cant find the user");
+    } finally {
+      setLoading(false); // ✅ stop loading
     }
   };
 
@@ -38,6 +42,8 @@ function Search() {
           Search
         </button>
       </form>
+
+      {loading && <p className="text-gray-500 mt-4">Loading</p>} {/* ✅ required */}
 
       {error && <p className="text-red-500 mt-4">{error}</p>}
 
