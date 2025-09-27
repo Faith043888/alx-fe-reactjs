@@ -1,114 +1,95 @@
-// src/components/Search.jsx
-import React, { useState } from "react";
 
-function Search() {
+import React, { useState } from "react";
+import { fetchUserData } from "../services/githubService";
+
+const Search = () => {
   const [username, setUsername] = useState("");
+  const [location, setLocation] = useState("");
+  const [minRepos, setMinRepos] = useState("");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [page, setPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
+  const [error, setError] = useState(null);
 
-  const fetchUserData = async (currentPage = 1) => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setLoading(true);
-    setError("");
+    setError(null);
+
     try {
-      const response = await fetch(
-        `https://api.github.com/search/users?q=${username}&page=${currentPage}&per_page=10`
-      );
-      const data = await response.json();
-
-      if (data.items && data.items.length > 0) {
-        setUsers(data.items);
-        setTotalCount(data.total_count);
-        setPage(currentPage);
-      } else {
-        setError("Looks like we cant find the user");
-        setUsers([]);
-      }
+      const data = await fetchUserData(username, location, minRepos);
+      setUsers(data);
     } catch (err) {
-      setError("Error fetching user data");
+      setError("Looks like we cant find the user");
       setUsers([]);
-    }
-    setLoading(false);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (username.trim()) {
-      fetchUserData(1);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md">
-      {/* Search Form */}
-      <form onSubmit={handleSubmit} className="flex mb-4">
+    <div className="p-6 max-w-2xl mx-auto">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
-          placeholder="Search GitHub username..."
+          placeholder="Search by username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="flex-1 px-4 py-2 border rounded-l-md focus:outline-none"
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="text"
+          placeholder="Filter by location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+        <input
+          type="number"
+          placeholder="Min repos"
+          value={minRepos}
+          onChange={(e) => setMinRepos(e.target.value)}
+          className="w-full p-2 border rounded"
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded-r-md"
+          className="w-full bg-blue-600 text-white py-2 rounded"
         >
           Search
         </button>
       </form>
 
-      {/* Loading and Errors */}
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-
-      {/* Search Results */}
-      <ul>
-        {users.map((user) => (
-          <li key={user.id} className="flex items-center mb-2">
-            <img
-              src={user.avatar_url}
-              alt={user.login}
-              className="w-10 h-10 rounded-full mr-3"
-            />
-            <a
-              href={user.html_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline"
-            >
-              {user.login}
-            </a>
-          </li>
-        ))}
-      </ul>
-
-      {/* Pagination */}
-      {totalCount > 10 && (
-        <div className="flex justify-between mt-4">
-          <button
-            onClick={() => fetchUserData(page - 1)}
-            disabled={page === 1}
-            className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-          >
-            Previous
-          </button>
-          <span className="px-2 py-1">
-            Page {page} of {Math.ceil(totalCount / 10)}
-          </span>
-          <button
-            onClick={() => fetchUserData(page + 1)}
-            disabled={page * 10 >= totalCount}
-            className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
-          >
-            Next
-          </button>
-        </div>
-      )}
+      <div className="mt-6">
+        {loading && <p>Loading...</p>}
+        {error && <p>{error}</p>}
+        {users.length > 0 && (
+          <ul className="space-y-4">
+            {users.map((user) => (
+              <li key={user.id} className="p-4 border rounded flex items-center">
+                <img
+                  src={user.avatar_url}
+                  alt={user.login}
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <div>
+                  <p className="font-bold">{user.login}</p>
+                  <a
+                    href={user.html_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500"
+                  >
+                    View Profile
+                  </a>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
-}
+};
 
 export default Search;
+
 
