@@ -1,53 +1,54 @@
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import React from "react";
+import { useFormik } from "formik";
 
 const FormikForm = () => {
-  const initialValues = {
-    username: "",
-    email: "",
-    password: ""
-  };
-
-  const validationSchema = Yup.object({
-    username: Yup.string().required("Username is required"),
-    email: Yup.string().email("Invalid email format").required("Email is required"),
-    password: Yup.string().required("Password is required")
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+    },
+    validate: (values) => {
+      const errors = {};
+      if (!values.name) {
+        errors.name = "Name is required";
+      }
+      if (!values.email) {
+        errors.email = "Email is required";
+      }
+      return errors;
+    },
+    onSubmit: (values) => {
+      console.log("Form submitted:", values);
+      alert("Form submitted successfully!");
+    },
   });
 
-  const onSubmit = (values) => {
-    console.log("Formik Values:", values);
-  };
-
   return (
-    <Formik 
-      initialValues={initialValues} 
-      validationSchema={validationSchema} 
-      onSubmit={onSubmit}
-    >
-      <Form style={{ maxWidth: "400px", margin: "0 auto" }}>
-        <h2>User Registration (Formik)</h2>
+    <form onSubmit={formik.handleSubmit}>
+      <div>
+        <label>Name:</label>
+        <input
+          type="text"
+          name="name"
+          onChange={formik.handleChange}
+          value={formik.values.name}
+        />
+        {formik.errors.name && <p style={{ color: "red" }}>{formik.errors.name}</p>}
+      </div>
 
-        <div>
-          <label>Username:</label>
-          <Field type="text" name="username" />
-          <ErrorMessage name="username" component="div" style={{ color: "red" }} />
-        </div>
+      <div>
+        <label>Email:</label>
+        <input
+          type="email"
+          name="email"
+          onChange={formik.handleChange}
+          value={formik.values.email}
+        />
+        {formik.errors.email && <p style={{ color: "red" }}>{formik.errors.email}</p>}
+      </div>
 
-        <div>
-          <label>Email:</label>
-          <Field type="email" name="email" />
-          <ErrorMessage name="email" component="div" style={{ color: "red" }} />
-        </div>
-
-        <div>
-          <label>Password:</label>
-          <Field type="password" name="password" />
-          <ErrorMessage name="password" component="div" style={{ color: "red" }} />
-        </div>
-
-        <button type="submit">Register</button>
-      </Form>
-    </Formik>
+      <button type="submit">Submit</button>
+    </form>
   );
 };
 
